@@ -112,18 +112,22 @@ export default {
      * @param {Object} param0 context
      * @param {Object} confirm need confirm ?
      */
-    d2adminLogout ({ state, commit, rootState }, { vm, confirm }) {
+    d2adminLogout ({ state, commit, rootState }, { vm, confirm ,UserManager}) {
       /**
        * @description 注销
        */
       function logout () {
+        console.log(UserManager);
         // 删除cookie
         util.cookies.remove('token')
         util.cookies.remove('uuid')
-        // 跳转路由
-        vm.$router.push({
-          name: 'login'
-        })
+     
+        UserManager.signoutRedirect();
+        // // 跳转路由
+        // vm.$router.push({
+        //   name: 'IdentityServerClient'
+        // })
+       
       }
       // 判断是否需要确认
       if (confirm) {
@@ -136,6 +140,7 @@ export default {
           .then(() => {
             commit('d2adminGrayModeSet', false)
             logout()
+         
           })
           .catch(() => {
             commit('d2adminGrayModeSet', false)

@@ -65,7 +65,25 @@ const frameIn = [
             name: 'AssignRoleMenu',
             component: () => import('@/pages/User/AssignRoleMenu'),
             meta: { meta, title: '分配角色菜单' }
-        }
+        },
+        {
+          path: '/IdentityServerClient',
+          name: 'IdentityServerClient',
+          component: () => import('@/pages/IdentityServer/IdentityServerClient'),
+          meta: { meta, title: 'IdentityServer客户端' }
+        },
+        {
+          path: '/IdentityServerCallBack',
+          name: 'IdentityServerCallBack',
+          component: () => import('@/pages/IdentityServer/IdentityServerCallBack'),
+          meta: { meta, title: 'IdentityServer请求回调页' }
+        },
+        {
+          path: '/IdentityServerRefreshToken',
+          name: 'IdentityServerRefreshToken',
+          component: () => import('@/pages/IdentityServer/IdentityServerRefreshToken'),
+          meta: { meta, title: 'IdentityServer静默刷新Token' }
+        },
     ]
   }
 ]
