@@ -8,5 +8,7 @@ import Oidc from "oidc-client";
         }).catch(function (e) {
               
         });
-  export default{}
+  export default{
+
+  }
 </script>

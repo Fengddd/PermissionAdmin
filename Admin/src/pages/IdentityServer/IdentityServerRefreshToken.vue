@@ -6,17 +6,14 @@
 
 <script>
 import Oidc from "oidc-client";
-
-
-  export default{
-
-    mounted(){
-         new Oidc.UserManager().signinSilentCallback().then(function () {
+   new Oidc.UserManager().signinSilentCallback().then(function () {
            console.log("我自己更新了");
                window.location = "www.baidu.com";
         }).catch(function (e) {
            console.log(e);
-        });
-    }
+        })
+
+  export default{
+      
   }
 </script>
