@@ -10,13 +10,11 @@ import '@/assets/svg-icons'
 import '@/components'
 import '@/plugin/axios'
 import '@/mock/register'
-import util from '@/libs/util.js'
+import util from '/src/libs/util.js'
 import store from '@/store/index'
 import pluginOpen from '@/plugin/open'
-// import VueResource  from 'vue-resource'//通过import引入vue-resource
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-
 
 // 菜单和路由设置
 import router from './router'
@@ -27,13 +25,58 @@ import { frameInRoutes } from '@/router/routes'
 Vue.use(ElementUI)
 Vue.use(pluginOpen)
 Vue.use(VueAxios, axios)
-    // Vue.use(VueResource)
+Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 
 
 Vue.prototype.$env = process.env.NODE_ENV
 Vue.prototype.$baseUrl = process.env.BASE_URL
+    //添加axios拦截器
+axios.interceptors.request.use(function(config) {
+    //header中添加accessToken  
+    const accessToken = util.cookies.get('accessToken')
+    if (accessToken != "") { //判断token是否存在
+        config.headers.Authorization = 'Bearer' + accessToken; //将token设置成请求头
+    }
+    return config;
+}, function(error) {
+    console.log(error);
+    // 对请求错误做些什么
+    return Promise.reject(error);
+});
+//axios响应拦截器
+axios.interceptors.response.use(function(response) {
+    // 在接收响应做些什么，例如跳转到登录页
 
+    return response;
+}, function(error) {
+    if (error.response) {
+        switch (error.response.status) {
+            case 401:
+                const refreshToken = util.cookies.get('refreshToken');
+                var url = "http://localhost:17491/connect/token";
+                let param = new URLSearchParams();
+                param.append("client_id", 'js');
+                param.append("client_secret", '');
+                param.append("grant_type", 'refresh_token');
+                param.append("refresh_token", refreshToken);
+                this.axios({
+                    method: 'post',
+                    url: url,
+                    data: param,
+                    params: param,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } //设置header信息
+                }).then(function(response) {
+                    console.log(response);
+                    util.cookies.set('accessToken', response.access_token)
+                    util.cookies.set('refreshToken', response.refresh_token)
+                }).catch(function(error) {
+                    console.log(error);
+                });
+        }
+    }
+    return Promise.reject(error);
+});
 
 new Vue({
     router,

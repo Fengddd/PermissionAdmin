@@ -29,7 +29,8 @@
 </style>
 <script>
 import Oidc from "oidc-client";
-import axios from 'axios'
+import util from '/src/libs/util.js'
+// import axios from 'axios'
 var config = {
   authority: "http://localhost:17491",
   client_id: "js",
@@ -54,13 +55,15 @@ export default {
       console.log(user);
       that.accessToken=user.access_token;
       that.refreshToken=user.refresh_token;
-        console.log(that.accessToken);
+      util.cookies.set('accessToken', user.access_token)
+      util.cookies.set('refreshToken', user.refresh_token)
+      
     });
   },
   methods: {
     CeShiRefreshToken:function() {
       console.log("测试CeShiRefreshToken");
-      var that=this;
+        var that=this;
      
          var url = "http://localhost:17491/connect/token";
      
@@ -69,7 +72,7 @@ export default {
          param.append("client_secret", '');
          param.append("grant_type", 'refresh_token');
          param.append("refresh_token", that.refreshToken);
-                  that.axios({
+                  that.$axios({
                       method: 'post',
                       url: url,
                       data: param,
@@ -78,7 +81,7 @@ export default {
                   }).then(function (response) {
                      console.log(response);
                         that.accessToken=response.access_token;
-                       that.refreshToken=response.refresh_token;
+                        that.refreshToken=response.refresh_token;
                     
                   }).catch(function (error) {
                       console.log(error);
@@ -99,7 +102,7 @@ export default {
           searchPwd: ''
         };
 
-        that.axios({
+        that.$axios({
           method: "post",
           url: "http://localhost:44375/api/User/GetUserList",
           data: params,
