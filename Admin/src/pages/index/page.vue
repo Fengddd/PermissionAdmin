@@ -29,7 +29,7 @@
 </style>
 <script>
 import Oidc from "oidc-client";
-import util from '/src/libs/util.js'
+import util from '@/libs/util.js'
 // import axios from 'axios'
 var config = {
   authority: "http://localhost:17491",
@@ -106,7 +106,7 @@ export default {
           method: "post",
           url: "http://localhost:44375/api/User/GetUserList",
           data: params,
-          headers: {'Authorization': 'Bearer ' + that.accessToken}//设置header信息
+          // headers: {'Authorization': 'Bearer ' + that.accessToken}//设置header信息
         }).then(function (response) {
                    console.log(response);
                 }).catch(function (error) {

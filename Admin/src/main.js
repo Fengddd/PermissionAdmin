@@ -10,7 +10,7 @@ import '@/assets/svg-icons'
 import '@/components'
 import '@/plugin/axios'
 import '@/mock/register'
-import util from '/src/libs/util.js'
+import util from '@/libs/util.js'
 import store from '@/store/index'
 import pluginOpen from '@/plugin/open'
 import axios from 'axios'
@@ -35,8 +35,11 @@ Vue.prototype.$baseUrl = process.env.BASE_URL
 axios.interceptors.request.use(function(config) {
     //header中添加accessToken  
     const accessToken = util.cookies.get('accessToken')
+    
     if (accessToken != "") { //判断token是否存在
-        config.headers.Authorization = 'Bearer' + accessToken; //将token设置成请求头
+        //将token设置成请求头
+        config.headers.common['Authorization'] ='Bearer ' + accessToken; 
+        console.log(accessToken);
     }
     return config;
 }, function(error) {
@@ -54,13 +57,14 @@ axios.interceptors.response.use(function(response) {
         switch (error.response.status) {
             case 401:
                 const refreshToken = util.cookies.get('refreshToken');
+                console.log("refreshToken"+refreshToken);
                 var url = "http://localhost:17491/connect/token";
                 let param = new URLSearchParams();
                 param.append("client_id", 'js');
                 param.append("client_secret", '');
                 param.append("grant_type", 'refresh_token');
                 param.append("refresh_token", refreshToken);
-                this.axios({
+                axios({
                     method: 'post',
                     url: url,
                     data: param,
