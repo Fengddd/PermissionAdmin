@@ -30,7 +30,7 @@
 <script>
 import Oidc from "oidc-client";
 import util from '@/libs/util.js'
-// import axios from 'axios'
+import axios from 'axios'
 var config = {
   authority: "http://localhost:17491",
   client_id: "js",
@@ -39,9 +39,42 @@ var config = {
   response_type: "code",
   scope: "openid profile identityServerApi delimitClaim offline_access",
   post_logout_redirect_uri: "http://localhost:8080",
-  automaticSilentRenew:true
+  accessTokenExpiringNotificationTime: 4,
+  automaticSilentRenew: true,
+  filterProtocolClaims: true
 };
 var mgr = new Oidc.UserManager(config);
+mgr.events.addAccessTokenExpiring(function () {
+    console.log("token expiring");
+  
+
+});
+
+mgr.events.addAccessTokenExpired(function () {
+    console.log("token expired");
+
+});
+
+mgr.events.addSilentRenewError(function (e) {
+    console.log("silent renew error", e.message);
+ 
+});
+
+mgr.events.addUserLoaded(function (user) {
+    console.log("user loaded", user);
+    mgr.getUser().then(function(user){
+      util.cookies.set('accessToken', user.access_token)
+      util.cookies.set('refreshToken', user.refresh_token)
+    });
+});
+
+mgr.events.addUserUnloaded(function (e) {
+    console.log("user unloaded");
+});
+
+mgr.events.addUserSignedOut(function (e) {
+    console.log("user addUserSignedOut");
+});
 export default {
    data() {
     return {
@@ -72,7 +105,7 @@ export default {
          param.append("client_secret", '');
          param.append("grant_type", 'refresh_token');
          param.append("refresh_token", that.refreshToken);
-                  that.$axios({
+                  that.axios({
                       method: 'post',
                       url: url,
                       data: param,
@@ -93,7 +126,6 @@ export default {
     CeShiApi:function() {
       console.log("测试API");
       var that=this;
-      mgr.getUser().then(function(user) {
 
           var params = {
           pagesize: 10,
@@ -114,7 +146,7 @@ export default {
                 });
 
                                  
-      });
+      
     },
     SilentCallback:function() {
 

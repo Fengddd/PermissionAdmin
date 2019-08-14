@@ -6,13 +6,8 @@
 
 <script>
 import Oidc from "oidc-client";
-   new Oidc.UserManager().signinSilentCallback().then(function () {
-           console.log("我自己更新了");
-           window.location = "www.baidu.com";
-        }).catch(function (e) {
-           console.log(e);
-        })
-
+  
+new Oidc.UserManager().signinSilentCallback();
   export default{
       
   }

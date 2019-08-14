@@ -35,11 +35,13 @@ Vue.prototype.$baseUrl = process.env.BASE_URL
 axios.interceptors.request.use(function(config) {
     //header中添加accessToken  
     const accessToken = util.cookies.get('accessToken')
-    
+
     if (accessToken != "") { //判断token是否存在
-        //将token设置成请求头
-        config.headers.common['Authorization'] ='Bearer ' + accessToken; 
-        console.log(accessToken);
+        if (config.url != 'http://localhost:17491/connect/token') {
+            //将token设置成请求头
+            config.headers.common['Authorization'] = 'Bearer ' + accessToken;
+            console.log(accessToken);
+        }
     }
     return config;
 }, function(error) {
@@ -53,11 +55,12 @@ axios.interceptors.response.use(function(response) {
 
     return response;
 }, function(error) {
+    console.log(error);
     if (error.response) {
         switch (error.response.status) {
-            case 401:
+            case 4010:
                 const refreshToken = util.cookies.get('refreshToken');
-                console.log("refreshToken"+refreshToken);
+                console.log("refreshToken" + refreshToken);
                 var url = "http://localhost:17491/connect/token";
                 let param = new URLSearchParams();
                 param.append("client_id", 'js');
